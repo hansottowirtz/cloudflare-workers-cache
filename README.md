@@ -15,7 +15,7 @@ import {
 
 const cacheSettings = {
   objectCache: createCfCacheObjectCacheProvider(caches.open("cache")),
-  cacheTagStore: (env) => createCfKvCacheTagStore(env.KV),
+  cacheTagStore: (env) => createCfKvCacheTagStore(env.CACHE_TAG_STORE),
 };
 
 const cachedSum = cache(sum, ["sum"], {
