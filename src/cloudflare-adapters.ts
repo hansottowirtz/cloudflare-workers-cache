@@ -1,7 +1,7 @@
 import { CacheTagStore, ObjectCache } from "./cache";
 
 const constructCacheUrl = (key: string) => {
-  return `http://cache/${key}`;
+  return `http://cache/${encodeURIComponent(key)}`;
 };
 
 export function createCfCacheObjectCacheProvider(
