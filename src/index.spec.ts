@@ -6,14 +6,14 @@ import {
 import { describe, it, expect } from "vitest";
 import { cache } from "./cache";
 import {
-  createCfCacheObjectCacheProvider,
+  createCfCacheObjectCache,
   createCfKvCacheTagStore,
 } from "./cloudflare-adapters";
-import { provideCacheToFetch } from "./wrap-fetch";
+import { CacheConfig, provideCacheToFetch } from "./wrap-fetch";
 
 declare module "cloudflare:test" {
   interface ProvidedEnv {
-    KV: KVNamespace;
+    CACHE_TAG_STORE: KVNamespace;
   }
 }
 
@@ -22,14 +22,14 @@ const slowSum = async (a: number, b: number) => {
   return a + b;
 };
 
-const cacheSettings = {
-  objectCache: createCfCacheObjectCacheProvider(caches.open("cache")),
-  cacheTagStore: createCfKvCacheTagStore(env.KV),
+const cacheConfig: CacheConfig<import("cloudflare:test").ProvidedEnv> = {
+  objectCache: createCfCacheObjectCache(caches.open("cache")),
+  cacheTagStore: (env) => createCfKvCacheTagStore(env.CACHE_TAG_STORE),
 };
 
 function createTestSumWorker(sumFn: (a: number, b: number) => Promise<number>) {
   const sumWorker = {
-    fetch: provideCacheToFetch(cacheSettings, async (req) => {
+    fetch: provideCacheToFetch(cacheConfig, async (req) => {
       const qp = new URL(req.url).searchParams;
       const a = +qp.get("a")!;
       const b = +qp.get("b")!;
@@ -132,7 +132,7 @@ describe("Cache", () => {
       expect(result.time).toBeLessThan(100);
       expect(result.responseText).toMatchInlineSnapshot(`"3"`);
     }
-    await createCfKvCacheTagStore(env.KV).revalidateTag("sum");
+    await createCfKvCacheTagStore(env.CACHE_TAG_STORE).revalidateTag("sum");
     {
       const result = await measureWorkerRequest(
         "http://sum?a=1&b=2",

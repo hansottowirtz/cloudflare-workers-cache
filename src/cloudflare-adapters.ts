@@ -4,7 +4,7 @@ const constructCacheUrl = (key: string) => {
   return `http://cache/${encodeURIComponent(key)}`;
 };
 
-export function createCfCacheObjectCacheProvider(
+export function createCfCacheObjectCache(
   cache: Cache | Promise<Cache>
 ): ObjectCache {
   return {
@@ -34,10 +34,14 @@ export function createCfCacheObjectCacheProvider(
   };
 }
 
-export function createCfKvCacheTagStore(kvNamespace: KVNamespace): CacheTagStore {
+export function createCfKvCacheTagStore(
+  kvNamespace: KVNamespace
+): CacheTagStore {
   return {
     async getTagsCacheKey(tags) {
-      const tagDates = await Promise.all(tags.map((tag) => kvNamespace.get(tag)));
+      const tagDates = await Promise.all(
+        tags.map((tag) => kvNamespace.get(tag))
+      );
       return tagDates.map((date) => date ?? 0).join(",");
     },
     async revalidateTag(tag) {

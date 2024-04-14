@@ -4,4 +4,10 @@ main = "src/index.ts"
 compatibility_date = "2024-04-01"
 compatibility_flags = ["nodejs_compat"]
 
-kv_namespaces = [{ binding = "CACHE_TAGS_STORE", id = "7e2e9fc422804784a07d3d9084e829fb" }]
+kv_namespaces = [
+  { binding = "CACHE_TAG_STORE", id = "7e2e9fc422804784a07d3d9084e829fb" },
+]
+
+routes = [
+  { pattern = "cloudflare-workers-cache-example-app.hansottowirtz.be", custom_domain = true },
+]

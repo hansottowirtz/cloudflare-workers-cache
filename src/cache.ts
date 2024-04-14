@@ -9,6 +9,22 @@ export const provideWaitUntil = waitUntilALS.run.bind(waitUntilALS);
 export const provideObjectCache = objectCacheALS.run.bind(objectCacheALS);
 export const provideCacheTagStore = cacheTagStoreALS.run.bind(cacheTagStoreALS);
 
+const consumeWaitUntil = () => {
+  const waitUntil = waitUntilALS.getStore();
+  assert(waitUntil, "waitUntil not set");
+  return waitUntil;
+};
+const consumeObjectCache = () => {
+  const objectCache = objectCacheALS.getStore();
+  assert(objectCache, "objectCache not set");
+  return objectCache;
+};
+const consumeCacheTagStore = () => {
+  const cacheTagStore = cacheTagStoreALS.getStore();
+  assert(cacheTagStore, "cacheTagStore not set");
+  return cacheTagStore;
+};
+
 export type ObjectCache = {
   get: (key: string) => Promise<
     | {
@@ -28,6 +44,7 @@ export type CacheTagStore = {
   getTagsCacheKey: (tags: string[]) => Promise<string>;
 };
 
+const YEAR_IN_SECONDS = 60 * 60 * 24 * 365;
 export function cache<T extends (...args: any[]) => Promise<any>>(
   cb: T,
   keyParts?: string[],
@@ -41,13 +58,9 @@ export function cache<T extends (...args: any[]) => Promise<any>>(
   }`;
 
   const cachedCb = async (...args: any[]) => {
-    const waitUntil = waitUntilALS.getStore();
-    const tagRevalidateCacheProvider = cacheTagStoreALS.getStore();
-    const objectCacheProvider = objectCacheALS.getStore();
-
-    assert(tagRevalidateCacheProvider, "cacheProvider not set");
-    assert(waitUntil, "waitUntil not set");
-    assert(objectCacheProvider, "objectCacheProvider not set");
+    const waitUntil = consumeWaitUntil();
+    const objectCacheProvider = consumeObjectCache();
+    const tagRevalidateCacheProvider = consumeCacheTagStore();
 
     const invocationKey = `${fixedKey}-${JSON.stringify(args)}`;
     const tagsCacheKey = options.tags
@@ -63,7 +76,7 @@ export function cache<T extends (...args: any[]) => Promise<any>>(
       objectCacheProvider.set(
         totalCacheKey,
         result,
-        options.revalidate !== false ? options.revalidate ?? 60 : 0
+        options.revalidate !== false ? options.revalidate ?? YEAR_IN_SECONDS : 0
       )
     );
 
@@ -74,9 +87,7 @@ export function cache<T extends (...args: any[]) => Promise<any>>(
 }
 
 export const revalidateTag = (tag: string) => {
-  const cacheTagStore = cacheTagStoreALS.getStore();
-  const waitUntil = waitUntilALS.getStore();
-  assert(cacheTagStore, "cacheTagStore not set");
-  assert(waitUntil, "waitUntil not set");
+  const cacheTagStore = consumeCacheTagStore();
+  const waitUntil = consumeWaitUntil();
   waitUntil(cacheTagStore.revalidateTag(tag));
-}
+};

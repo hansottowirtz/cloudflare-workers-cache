@@ -1,6 +1,6 @@
 {
   "name": "cloudflare-workers-cache",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "packageManager": "yarn@4.1.1",
   "license": "MIT",
   "workspaces": [

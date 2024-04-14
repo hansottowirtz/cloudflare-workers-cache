@@ -6,11 +6,13 @@ import {
   provideWaitUntil,
 } from "./cache";
 
+export type CacheConfig<Env = unknown> = {
+  objectCache: ObjectCache | ((env: Env) => ObjectCache);
+  cacheTagStore: CacheTagStore | ((env: Env) => CacheTagStore);
+};
+
 export function provideCacheToFetch<Env = unknown>(
-  config: {
-    objectCache: ObjectCache | ((env: any) => ObjectCache);
-    cacheTagStore: CacheTagStore | ((env: any) => CacheTagStore);
-  },
+  config: CacheConfig<Env>,
   fetch: ExportedHandlerFetchHandler<Env>
 ) {
   const wrappedFetch: ExportedHandlerFetchHandler<Env> = async (
