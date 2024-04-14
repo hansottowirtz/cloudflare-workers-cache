@@ -2,7 +2,7 @@
 
 Cache any JSON-serializable result from an async function. It uses the same API as [`unstable_cache` from Next.js](https://nextjs.org/docs/app/api-reference/functions/unstable_cache).
 
-- Simple wrapper function over [Cloudflare Workers Cache API](https://developers.cloudflare.com/workers/runtime-apis/cache/#accessing-cache).
+- Simple wrapper function over the [Cloudflare Workers Cache API](https://developers.cloudflare.com/workers/runtime-apis/cache/#accessing-cache).
 - Supports time-based and tag-based cache revalidation.
 - Stores tag revalidation data in a KV store.
 - No need for a Cloudflare Enterprise account for tag revalidation.
@@ -11,7 +11,7 @@ Cache any JSON-serializable result from an async function. It uses the same API 
 const getUser = (id: number) => sql`SELECT * FROM users WHERE id = ${id}`;
 
 const cachedGetUser = cache(getUser, ["get-user"], {
-  tags: ["users"]
+  tags: ["users"],
   revalidate: 60,
 });
 
@@ -67,7 +67,7 @@ export default {
 }
 ```
 
-### Write custom caches
+### Write custom cache stores
 
 By default, the object cache uses Cloudflare Cache, and the tag store uses Cloudflare KV, see [src/cloudflare-adapters.ts](src/cloudflare-adapters.ts). You can write your own implementations by implementing the `ObjectCache` and `CacheTagStore` interfaces.
 
