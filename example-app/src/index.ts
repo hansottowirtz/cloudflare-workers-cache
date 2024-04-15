@@ -8,11 +8,12 @@ import {
   provideCacheToFetch,
   createCfCacheObjectCache,
   createCfKvCacheTagStore,
+  type CacheConfig,
 } from "../../src/index";
 
-const cacheConfig = {
+const cacheConfig: CacheConfig<Env> = {
   objectCache: createCfCacheObjectCache(caches.open("cache")),
-  cacheTagStore: (env: Env) => createCfKvCacheTagStore(env.CACHE_TAG_STORE),
+  cacheTagStore: (env) => createCfKvCacheTagStore(env.CACHE_TAG_STORE),
 };
 
 const sum = async (a: number, b: number) => {
