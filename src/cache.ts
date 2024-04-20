@@ -59,21 +59,21 @@ export function cache<T extends (...args: any[]) => Promise<any>>(
 
   const cachedCb = async (...args: any[]) => {
     const waitUntil = consumeWaitUntil();
-    const objectCacheProvider = consumeObjectCache();
-    const tagRevalidateCacheProvider = consumeCacheTagStore();
+    const objectCache = consumeObjectCache();
+    const cacheTagStore = consumeCacheTagStore();
 
     const invocationKey = `${fixedKey}-${JSON.stringify(args)}`;
     const tagsCacheKey = options.tags
-      ? await tagRevalidateCacheProvider.getTagsCacheKey(options.tags)
+      ? await cacheTagStore.getTagsCacheKey(options.tags)
       : "";
     const totalCacheKey = `${tagsCacheKey}-${invocationKey}`;
 
-    const cachedResult = await objectCacheProvider.get(totalCacheKey);
+    const cachedResult = await objectCache.get(totalCacheKey);
     if (cachedResult.found) return cachedResult.data;
 
     const result = await cb(...args);
     waitUntil(
-      objectCacheProvider.set(
+      objectCache.set(
         totalCacheKey,
         result,
         options.revalidate !== false ? options.revalidate ?? YEAR_IN_SECONDS : 0
