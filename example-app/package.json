@@ -9,9 +9,11 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.1.0",
-    "typescript": "^5.0.4",
-    "vitest": "1.3.0",
-    "wrangler": "^3.0.0"
+    "@cloudflare/vitest-pool-workers": "^0.16.10",
+    "@vitest/runner": "^4.1.7",
+    "@vitest/snapshot": "^4.1.7",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.7",
+    "wrangler": "^4.95.0"
   }
 }
