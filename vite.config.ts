@@ -8,8 +8,8 @@ export default defineConfig({
     minify: false,
     lib: {
       entry: "src/index.ts",
-      formats: ["es", "cjs"],
-      fileName: (format) => (format === "es" ? "index.js" : "index.cjs"),
+      formats: ["es"],
+      fileName: () => "index.js",
     },
     rollupOptions: {
       external: ["node:async_hooks", "node:assert"],
